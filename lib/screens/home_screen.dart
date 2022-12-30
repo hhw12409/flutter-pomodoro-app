@@ -49,6 +49,22 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void onRefreshPressed() {
+    timer.cancel();
+    setState(() {
+      isRunning = false;
+      totalSeconds = initialSeconds;
+    });
+  }
+
+  void onRefreshPomodoros() {
+    if (totalPomodoros != 0) {
+      setState(() {
+        totalPomodoros = 0;
+      });
+    }
+  }
+
   String formatToMinutes(int seconds) {
     var duration = Duration(seconds: seconds);
     return duration.toString().split('.').first.substring(2, 7);
@@ -77,15 +93,27 @@ class _HomeScreenState extends State<HomeScreen> {
           Flexible(
             flex: 3,
             child: Center(
-              child: IconButton(
-                iconSize: 120,
-                color: Theme.of(context).cardColor,
-                onPressed: isRunning ? onPausePressed : onStartPressed,
-                icon: isRunning
-                    ? const Icon(Icons.pause_circle_outline)
-                    : const Icon(
-                        Icons.play_circle_outline,
-                      ),
+              child: Column(
+                children: [
+                  IconButton(
+                    iconSize: 120,
+                    color: Theme.of(context).cardColor,
+                    onPressed: isRunning ? onPausePressed : onStartPressed,
+                    icon: isRunning
+                        ? const Icon(Icons.pause_circle_outline)
+                        : const Icon(
+                            Icons.play_circle_outline,
+                          ),
+                  ),
+                  IconButton(
+                    iconSize: 120,
+                    color: Theme.of(context).cardColor,
+                    onPressed: onRefreshPressed,
+                    icon: const Icon(
+                      Icons.refresh_outlined,
+                    ),
+                  )
+                ],
               ),
             ),
           ),
@@ -105,13 +133,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Pomodoros',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                            color: Theme.of(context).textTheme.headline1!.color,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Pomodoros',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 20,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .color,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: onRefreshPomodoros,
+                              icon: const Icon(
+                                Icons.refresh_outlined,
+                              ),
+                            ),
+                          ],
                         ),
                         Text(
                           "$totalPomodoros",
